@@ -1,71 +1,71 @@
-# Brazilian E-Commerce Data Exploration & Wrangling Pipeline
-A meticulous, production-ready data pipeline dedicated to the deep exploration, architectural auditing, and programmatic cleaning of the Olist Brazilian E-Commerce Dataset. This phase focuses entirely on transforming raw, multi-table relational data into a pristine, high-integrity analytical asset through rigorous data wrangling and schema validation.
+# Brazilian E-Commerce: Data Exploration & Cleaning Pipeline
+A structured and professional data pipeline focused on exploring, understanding, and cleaning the Olist Brazilian E-Commerce Dataset. This project handles the essential first step of data analytics: transforming raw, disconnected tables into clean, reliable data ready for accurate analysis.
 
 ## 📌 Project Overview
-Real-world e-commerce data is inherently messy, fragmented, and prone to anomalies. This project serves as the foundational data engineering layer that takes 9 interdependent datasets from Olist and applies rigorous programmatic checks. By auditing schema constraints, distinguishing transactional topologies, and applying defensive imputation strategies, the data is prepared for high-performance downstream modeling without sacrificing business-critical records.
+In the real world, e-commerce data is always messy, full of missing values, and split across many tables. This project serves as the foundation. It takes 9 different datasets from Olist and runs careful programmatic checks. By analyzing table relationships and using smart data cleaning choices, the data is prepared for any future modeling or analysis without losing important sales records.
 
-## 🏗️ Schema Topology & Architectural Audit
-Before modifying any data, a structural audit was performed to establish the relationship between tables, mapping them into an analytical schema framework:
+## 🏗️ Understanding the Data Structure (Schema Audit)
+Before changing any data, I analyzed the structure to understand how the tables connect with each other, dividing them into a clear structure:
 
-### 🌟 Fact Tables (Transactional Core)
-order_items: The granular operational anchor recording transaction metrics (price, freight_value) and linking products to sellers.
+### 🌟 Fact Tables (The Core Transactions)
+order_items: The main sales table that stores core metrics like price and freight_value, connecting products to sellers.
 
-order_payments: Tracks payment sequences, methods, and installment structures.
+order_payments: Tracks how customers paid, including payment types and installment choices.
 
-order_reviews: Contains customer sentiment scores and text logs.
+order_reviews: Contains customer satisfaction scores and review comments.
 
-### 🧩 Dimension Tables (Contextual Anchors)
-orders: The central structural bridge tracking order status lifecycle and critical operational timestamps.
+### 🧩 Dimension Tables (The Context Details)
+orders: The bridge table that tracks order statuses (like shipped or canceled) and important timestamps.
 
-customers: Maps localized customer entities via unique tracking IDs.
+customers: Maps customer details using unique tracking IDs.
 
-products: Stores physical dimensions, structural attributes, and catalog metadata.
+products: Stores product details like categories and physical dimensions.
 
-sellers: Houses merchant registry records.
+sellers: Contains information about the registered merchants.
 
-geolocation & products_category: Contextual dimensional lookup references.
+geolocation & products_category: Reference tables used for looking up locations and English translations.
 
-## 🛠️ Pipeline Architecture & Execution Steps
-The pipeline is split into two primary phases: Deep Programmatic Exploration and Defensive Data Wrangling.
+## 🛠️ Step-by-Step Data Pipeline
+The workflow is split into two clear phases: Data Exploration and Data Cleaning.
 
-Phase 1: Deep Structural Exploration
-Instead of generic high-level overviews, every table underwent an algorithmic health check:
+### Phase 1: Deep Data Exploration
+Instead of just looking at the surface, I performed an architectural health check on every single table:
 
-Dimensionality Testing: Validated shapes, structural boundaries, and dynamic memory footprints using .shape and .info().
+Checking Data Shapes: Used .shape and .info() to check rows, columns, and data types across all tables.
 
-Key Constraint Validation: Systematically verified the uniqueness of Candidate Keys (e.g., confirming order_id as a strict Primary Key in orders while analyzing its multi-row distribution inside the Fact tables).
+Verifying Key Constraints: Checked the uniqueness of IDs (for example, making sure order_id acts as a unique Primary Key in the orders table).
 
-Anomalous Missing Value Audits: Calculated relative missingness percentages to isolate systematic systemic drops (e.g., isolating missing delivery dates against active order statuses like shipped or canceled).
+Analyzing Missing Values: Calculated the exact percentage of null values in each column to understand why they occur (like comparing missing delivery dates against statuses like canceled).
 
-Phase 2: High-Integrity Data Wrangling
-Data cleaning was approached through a business-logic-first lens, ensuring no records were dropped arbitrarily if they contained transaction value.
+### Phase 2: Smart Data Cleaning & Wrangling
+My data cleaning approach was guided by business logic, ensuring no data was dropped without a clear reason.
 
-Impact-Driven Null Auditing (Custom Business Logic): Built an automated programmatic check (check_null_products_in_orders) to evaluate missing product dimensions against actual transaction charts. Discovering that null-attribute items had active sales, a strict zero-drop policy was enforced to preserve revenue tracking.
+Custom Null Checking Logic: I created a custom Python function (check_null_products_in_orders) to see if products with missing dimensions actually had sales. Since they were actively selling, I chose a zero-drop policy to keep all revenue data safe.
 
-Defensive Imputation Strategies:
+Smart Imputation (Handling Missing Data):
 
-Missing physical metrics (weight, length, height, width) were imputed using median distribution calculations to shield metrics from outlier distortion.
+Filled missing physical dimensions (weight, length, etc.) with the median value to avoid being affected by extreme outliers.
 
-Missing textual product categories were standardized to "unknown".
+Replaced missing text categories with the word "unknown".
 
-Missing customer review text fields were systematically normalized to fallback values ("customer did not leave a comment", "review not provided").
+Normalized empty review fields with clear fallback text (like "customer did not leave a comment").
 
-Strict Structural Type Casting:
+Fixing Data Types:
 
-Converted raw string representations of temporal metadata into precise native datetime64[us] objects across all operational lifecycle checkpoints.
+Converted raw text date columns into true datetime64 formats to make time analysis possible.
 
-Cast structural numerical codes (like Zip Code Prefixes) into string datatypes to prevent mathematical skewing during analytical indexing.
+Changed numerical identifiers (like Zip Codes) into text formats (str) so Python doesn't treat them as math numbers.
 
-Text Sanitization: Standardized structural text variables via lowercase conversions and whitespace stripping (.lower().str.strip()) to eliminate semantic duplicates.
+Text Formatting: Cleaned up city names using lowercase conversion and removing extra spaces (.lower().str.strip()) to prevent duplicate entries.
 
-## 💻 Tech Stack & Tooling
+## 💻 Tech Stack & Tools
 Python 3.x
 
-Pandas: For core structural dataframe operations, vectorization, and type-casting.
+Pandas: For data manipulation, handling nulls, and data type formatting.
 
-NumPy: Used for fast vectorized structural logic and mathematical aggregations.
+NumPy: For efficient calculations and handling structural logic.
 
-## 📈 Technical Highlights & Engineering Decisions
-Revenue-Preserving Imputation: Rather than performing generic drop operations (.dropna()) on rows with missing features, the code evaluates transactional intersections first, ensuring 100% financial data retention.
+## 📈 Key Achievements & Decisions
+Business-First Cleaning: Instead of just deleting rows with missing details using .dropna(), my code checks if rows are linked to sales first, protecting 100% of the financial transaction history.
 
-Memory-Efficient Data Auditing: Leveraged native pandas vectorized expressions to compute structural metrics rapidly across large datasets (e.g., the 1-million-row geolocation matrix).
+Efficiency at Scale: Used optimized, vectorized Pandas expressions to audit large tables quickly, including the 1-million-row geolocation dataset.
